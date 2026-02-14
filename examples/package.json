@@ -1,0 +1,12 @@
+{
+  "name": "your-project",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Your project description",
+  "scripts": {
+    "docs:list": "tsx scripts/docs-list.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}
