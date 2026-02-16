@@ -1,0 +1,35 @@
+# Codex .rules files use Starlark. Rules match argv prefixes, not raw shell strings.
+# These rules are for commands running outside the sandbox.
+
+prefix_rule(
+  pattern=["git", "status"],
+  decision="allow",
+  match=[["git", "status"]],
+)
+
+prefix_rule(
+  pattern=["git", "diff"],
+  decision="allow",
+  match=[["git", "diff"], ["git", "diff", "--stat"]],
+)
+
+prefix_rule(
+  pattern=["rg"],
+  decision="allow",
+  match=[["rg", "--files"], ["rg", "TODO", "src"]],
+)
+
+# Prompt for common maintenance commands that can change files.
+prefix_rule(
+  pattern=["npm", "run", ["lint", "test", "docs:list"]],
+  decision="prompt",
+  match=[["npm", "run", "lint"]],
+  not_match=[["npm", "run", "build"]],
+)
+
+# Forbid obviously destructive commands.
+prefix_rule(
+  pattern=["rm", "-rf"],
+  decision="forbid",
+  match=[["rm", "-rf", "/"]],
+)

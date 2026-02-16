@@ -99,6 +99,8 @@ Discovery order (summary):
 - Global scope: in your Codex home directory (default `~/.codex`, or `$CODEX_HOME`), Codex reads `AGENTS.override.md` if present, otherwise `AGENTS.md`. It uses only the first non-empty file at this level.
 - Project scope: starting at the project root (typically the Git root), Codex walks down to your current working directory and reads any `AGENTS.md` it finds; if no project root exists, it only checks the current directory.
 
+Best practice: keep broad guidance at the project root, and place narrower instructions in subdirectories when a subtree needs different rules. When you want a subdirectory to fully override its parent guidance, use `AGENTS.override.md` in that directory.
+
 ### What to include
 
 **Do include:**
@@ -205,9 +207,13 @@ Codex uses progressive disclosure for skills: it loads skill metadata first and 
 
 ## OpenAI & Codex best practices
 
-- Put team defaults in project-scoped `.codex/config.toml` and personal defaults in `~/.codex/config.toml`. Codex loads project config only after you trust the project, and it walks from repo root to your working directory so the closest config wins.
-- Remember the CLI inherits defaults from `~/.codex/config.toml`. For one-off runs, prefer dedicated flags like `--model`, and use `-c key=value` (or `--config`) to override arbitrary keys for that invocation.
-- Use the shared Codex config to control default model, approvals, and sandbox settings across the CLI and IDE extension.
+- Put personal defaults in `~/.codex/config.toml` and team defaults in project-scoped `.codex/config.toml`. Codex loads project configs only after you trust the project.
+- Codex reads every `.codex/config.toml` from repo root to your current working directory; when keys conflict, the closest config wins.
+- The CLI inherits defaults from `~/.codex/config.toml`. For one-off runs, use `-c key=value` overrides (or dedicated flags like `--model`).
+- The Codex IDE extension uses the same CLI config file, so set defaults like model, approvals, and sandbox there to keep CLI + IDE consistent.
+- Use `.codex/rules/*.rules` files to control which commands Codex can run outside the sandbox (rules are experimental).
+- In Codex CLI, prefix a line with `!` to run a local shell command; its output is treated like user-provided results and still respects approvals/sandbox settings.
+- Use slash commands (`/`) in the Codex CLI to switch models, adjust permissions, or summarize long sessions without leaving the terminal.
 - For OpenAI API usage, follow safety best practices: use moderation, add human oversight, and perform adversarial testing (red-teaming).
 - Use the Moderation API to check whether text or images are potentially harmful; the moderation endpoint is free to use.
 
@@ -518,6 +524,8 @@ For team-shared MCP servers, create `.mcp.json` in your project root:
 
 Environment variable expansion (`${VAR}` and `${VAR:-default}`) is supported.
 
+Codex stores MCP configuration alongside other Codex settings in `config.toml`. You can scope MCP servers to a project by adding them to `.codex/config.toml` for trusted projects.
+
 ---
 
 ## Examples
@@ -533,6 +541,7 @@ The [`examples/`](examples/) directory contains ready-to-use templates:
 | [`docs-list.ts`](examples/docs-list.ts) | Documentation discovery script |
 | [`package.json`](examples/package.json) | npm package with `docs:list` script |
 | [`rules/`](examples/rules/) | Example modular rule files |
+| [`examples/.codex/rules/`](examples/.codex/rules/) | Example Codex CLI rules (sandbox escape allowlist) |
 
 To use these in your project, copy the files you need and adapt them.
 

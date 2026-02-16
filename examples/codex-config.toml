@@ -55,6 +55,8 @@ model_provider = "azure_secondary"
 # Projects (trust levels)
 ################################################################################
 
+# Project-scoped config is loaded only after you trust the project.
+# Codex reads every .codex/config.toml from repo root to your cwd; closest wins.
 [projects."/home/<user>/Development"]
 trust_level = "trusted"
 

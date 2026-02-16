@@ -74,6 +74,11 @@ When multiple agents may be working in the same repo:
 - Scope commits to your own changes only.
 - `git pull --rebase` is OK; never discard other agents' work.
 
+## Codex notes
+- Keep broad guidance at the repo root `AGENTS.md`, and add narrower rules in subdirectories when needed.
+- Use `AGENTS.override.md` in a subdirectory when you need to fully replace parent guidance.
+- In Codex CLI, prefix a line with `!` to run a local shell command inline.
+
 ## Tools
 
 ### Oracle
