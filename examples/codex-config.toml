@@ -1,0 +1,72 @@
+################################################################################
+# Defaults
+################################################################################
+
+model_provider = "azure"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+
+tool_output_token_limit = 25000
+# Leave room for native compaction near the 272–273k context window.
+# Formula: 273000 - (tool_output_token_limit + 15000)
+# With tool_output_token_limit=25000 ⇒ 273000 - (25000 + 15000) = 233000
+model_auto_compact_token_limit = 233000
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+
+################################################################################
+# Providers (flat map)
+################################################################################
+
+[model_providers.azure_primary]
+name = "Azure OpenAI (primary)"
+base_url = "https://<your-subdomain>-eastus2.openai.azure.com/openai/v1"
+env_key = "AZURE_OPENAI_API_KEY"
+wire_api = "responses"
+
+[model_providers.azure_secondary]
+name = "Azure OpenAI (secondary)"
+base_url = "https://<your-subdomain>.cognitiveservices.azure.com/openai/v1"
+env_key = "AZURE_OPENAI_API_KEY_SECONDARY"
+wire_api = "responses"
+
+
+[profiles.foundry-local]
+model = "gpt-5.2-codex"
+endpoint = "${AZURE_OPENAI_ENDPOINT}"
+api_key = "${AZURE_OPENAI_API_KEY}"
+deployment_id = "${CODEX_DEPLOYMENT_NAME}"
+
+################################################################################
+# Profiles (switch with: codex --profile <name>)
+################################################################################
+
+[profiles.azure-primary]
+model_provider = "azure_primary"
+
+
+[profiles.azure-secondary]
+model_provider = "azure_secondary"
+
+
+################################################################################
+# Projects (trust levels)
+################################################################################
+
+[projects."/home/<user>/Development"]
+trust_level = "trusted"
+
+
+################################################################################
+# Features
+################################################################################
+
+[features]
+ghost_commit = false
+unified_exec = true
+apply_patch_freeform = true
+web_search_request = true
+skills = true
+shell_snapshot = true
