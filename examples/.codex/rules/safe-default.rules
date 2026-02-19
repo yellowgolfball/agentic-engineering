@@ -33,3 +33,40 @@ prefix_rule(
   decision="forbid",
   match=[["rm", "-rf", "/"]],
 )
+
+# Windows guardrails: block cmd /c and common destructive built-ins.
+prefix_rule(
+  pattern=["cmd"],
+  decision="forbid",
+  match=[["cmd", "/c"]],
+)
+
+prefix_rule(
+  pattern=["cmd.exe"],
+  decision="forbid",
+  match=[["cmd.exe", "/c"]],
+)
+
+prefix_rule(
+  pattern=["rmdir"],
+  decision="forbid",
+  match=[["rmdir", "/s", "/q"]],
+)
+
+prefix_rule(
+  pattern=["rd"],
+  decision="forbid",
+  match=[["rd", "/s", "/q"]],
+)
+
+prefix_rule(
+  pattern=["del"],
+  decision="forbid",
+  match=[["del"]],
+)
+
+prefix_rule(
+  pattern=["erase"],
+  decision="forbid",
+  match=[["erase"]],
+)
