@@ -32,7 +32,7 @@ Use this when onboarding a repo to Codex or standardizing team defaults.
 
 ## 5. Rules and approvals
 - If you need to allow safe commands outside the sandbox, add `.codex/rules/*.rules`.
-- Start with an allowlist for read-only commands; add prompts for mutating commands; forbid dangerous ones.
+- Start with an allowlist for read-only commands; add prompts for mutating commands; mark dangerous ones as `decision: forbidden`.
 - Prefer narrow prefixes that match the exact argv you intend to allow.
 
 ## 6. Documentation discovery
