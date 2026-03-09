@@ -11,6 +11,7 @@ These patterns are tool-agnostic where possible, but examples use Claude Code an
 - [Skills](#skills)
 - [OpenAI & Codex best practices](#openai--codex-best-practices)
 - [docs:list — documentation discovery](#docslist--documentation-discovery)
+- [Context Hub — curated API docs for agents](#context-hub--curated-api-docs-for-agents)
 - [Oracle — multi-model second opinions](#oracle--multi-model-second-opinions)
 - [Settings and permissions](#settings-and-permissions)
 - [Modular rules](#modular-rules)
@@ -55,6 +56,8 @@ your-project/
     ...
   scripts/
     docs-list.ts                   # Documentation discovery script
+  node_modules/
+    @aisuite/chub/                 # Context Hub — curated API docs (devDependency)
 ```
 
 The key principle: **make project knowledge discoverable and machine-readable**. Agents work best when they can find what they need without guessing.
@@ -302,6 +305,114 @@ Reminder: keep docs up to date as behavior changes...
 ```
 
 See [`examples/docs-list.ts`](examples/docs-list.ts) for the full script.
+
+---
+
+## Context Hub — curated API docs for agents
+
+[Context Hub](https://github.com/andrewyng/context-hub) (`chub`) provides curated, LLM-optimized API documentation that agents can query before writing integration code. It solves the problem of agents hallucinating API calls or using outdated SDK patterns.
+
+### The problem
+
+Coding agents frequently hallucinate API signatures, use deprecated methods, or mix up SDK versions. Context Hub maintains an open-source registry of markdown documentation that is written specifically for LLM consumption — concise, correct, and versioned.
+
+### How it works
+
+1. **Search** — find relevant docs: `npx chub search "stripe payments"`
+2. **Fetch** — retrieve curated docs in your target language: `npx chub get stripe/api --lang js`
+3. **Code** — write the integration using the fetched documentation
+4. **Annotate** — save gotchas for future sessions: `npx chub annotate stripe/api "prefer PaymentIntents over Charges"`
+
+### Installation
+
+```bash
+npm install --save-dev @aisuite/chub
+```
+
+Requires Node.js >= 18.
+
+### CLI commands
+
+| Command | Purpose |
+|---|---|
+| `npx chub search [query]` | Search docs and skills (no query lists all) |
+| `npx chub get <id> [--lang js\|py]` | Fetch docs by ID in a specific language |
+| `npx chub annotate <id> <note>` | Attach persistent notes for future sessions |
+| `npx chub annotate --list` | Show all saved annotations |
+| `npx chub feedback <id> <up\|down>` | Rate content quality |
+| `npx chub update` | Refresh the cached registry index |
+
+### Language variants
+
+Most docs support `--lang js` (JavaScript/TypeScript) and `--lang py` (Python). Use the `--lang` flag matching the code you are writing.
+
+### Setting it up
+
+**1. Install the dependency:**
+
+```bash
+npm install --save-dev @aisuite/chub
+```
+
+**2. Add npm scripts** (optional convenience):
+
+```json
+{
+  "scripts": {
+    "api:search": "chub search",
+    "api:get": "chub get"
+  }
+}
+```
+
+**3. Instruct agents to use it:**
+
+Add to your `CLAUDE.md` or `AGENTS.md`:
+
+```markdown
+## Documentation workflow
+- Before using an external API: run `npx chub search "<service>"` and `npx chub get <id> --lang js|py`
+```
+
+### When agents should use it
+
+Agents should run `npx chub search` and `npx chub get` before writing code that:
+
+- Calls a third-party REST API or SDK
+- Integrates with an external service (payments, email, auth, storage, etc.)
+- Uses a client library whose API surface they are not confident about
+
+### Available content
+
+The registry includes 70+ curated docs covering popular APIs and SDKs: Stripe, AWS S3, OpenAI, Anthropic, Auth0, Firebase, Supabase, Prisma, Redis, MongoDB, Slack, Discord, Twilio, SendGrid, Sentry, Datadog, Pinecone, and many more. Run `npx chub search` for the full current list.
+
+### Example workflow
+
+```bash
+# Agent needs to add Stripe payments
+$ npx chub search "stripe"
+  stripe/api  [doc]  js  [maintainer]
+  stripe/payments  [doc]  js  [maintainer]
+
+$ npx chub get stripe/payments --lang js
+# Returns curated Stripe SDK documentation optimized for LLM consumption
+
+# Agent writes correct code using the fetched docs
+```
+
+### Annotations — persistent agent memory
+
+Annotations let agents save notes that persist across sessions:
+
+```bash
+# Agent discovers a gotcha
+npx chub annotate stripe/api "PaymentIntents require idempotency keys for retries"
+
+# Next session, the agent sees the annotation when fetching the doc
+npx chub get stripe/api --lang js
+```
+
+This creates a lightweight learning loop where agents build on past experience.
 
 ---
 
@@ -557,4 +668,5 @@ To use these in your project, copy the files you need and adapt them.
 - [Claude Code settings](https://code.claude.com/docs/en/settings)
 - [Agent Skills open standard](https://agentskills.io)
 - [Oracle — multi-model context bundler](https://github.com/steipete/oracle)
+- [Context Hub — curated API docs for agents](https://github.com/andrewyng/context-hub)
 - [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)

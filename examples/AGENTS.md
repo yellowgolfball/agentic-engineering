@@ -30,6 +30,7 @@ Brief description of what this project does.
 ## Documentation workflow
 - **Before starting work**: run `npm run docs:list` to see available documentation.
 - **Read relevant docs**: check the "Read when" hints and read docs matching your task.
+- **Before using an external API**: run `npx chub search "<service>"` and `npx chub get <id> --lang js|py` to fetch curated API docs.
 - **Keep docs current**: update docs when behavior or APIs change.
 - **Add missing coverage**: suggest new docs when gaps are found.
 - **Front matter required**: all docs must include `summary` and `read_when` fields.
@@ -41,6 +42,8 @@ Brief description of what this project does.
 - Test: `npm run test`
 - Lint: `npm run lint`
 - List docs: `npm run docs:list`
+- Search API docs: `npm run api:search -- "query"` or `npx chub search "query"`
+- Fetch API docs: `npm run api:get -- <id> --lang js` or `npx chub get <id> --lang js`
 
 As runnable code lands, update this section with build, test, lint, and run commands.
 
@@ -94,3 +97,22 @@ Oracle bundles prompts and files so another AI model can provide a second opinio
 - Reviewing critical code changes before committing
 - Cross-checking architectural decisions across multiple models
 - Getting unstuck when the primary agent is repeatedly failing
+
+### Context Hub (chub)
+Curated, LLM-optimized API documentation. Agents MUST consult chub before writing code that integrates with external APIs or SDKs.
+
+**Usage:**
+```bash
+npx chub search "stripe payments"        # find relevant docs
+npx chub get stripe/api --lang js        # fetch JS/TS docs
+npx chub get aws/s3 --lang py            # fetch Python docs
+npx chub search                          # list all available docs
+npx chub annotate <id> "gotcha note"     # save notes for future sessions
+```
+
+**When to use:**
+- Writing code that calls a third-party REST API or SDK
+- Integrating with an external service (payments, email, auth, storage, etc.)
+- Using a client library whose API surface you are not confident about
+
+**Workflow:** Search -> Fetch -> Code -> Annotate (if you discover gotchas)

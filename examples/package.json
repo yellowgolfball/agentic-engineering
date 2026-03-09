@@ -4,9 +4,12 @@
   "private": true,
   "description": "Your project description",
   "scripts": {
-    "docs:list": "tsx scripts/docs-list.ts"
+    "docs:list": "tsx scripts/docs-list.ts",
+    "api:search": "chub search",
+    "api:get": "chub get"
   },
   "devDependencies": {
+    "@aisuite/chub": "^0.1.1",
     "tsx": "^4.19.2"
   }
 }
