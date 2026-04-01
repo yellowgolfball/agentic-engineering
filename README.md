@@ -653,8 +653,42 @@ The [`examples/`](examples/) directory contains ready-to-use templates:
 | [`package.json`](examples/package.json) | npm package with `docs:list` script |
 | [`rules/`](examples/rules/) | Example modular rule files |
 | [`examples/.codex/rules/`](examples/.codex/rules/) | Example Codex CLI rules (sandbox escape allowlist) |
+| [`DESIGN.md`](examples/DESIGN.md) | Design system spec (NodeProxy example — colors, typography, components, layout) |
 
 To use these in your project, copy the files you need and adapt them.
+
+---
+
+## DESIGN.md — Design Systems for AI Agents
+
+[DESIGN.md](https://github.com/VoltAgent/awesome-design-md) is an open standard for documenting UI design systems in a way that AI agents can actually use. Instead of a visual style guide for humans, a `DESIGN.md` is a structured, machine-readable spec that an agent can read before generating any UI code — enabling it to produce components that match the existing visual language without access to design files or screenshots.
+
+The format covers 9 standardized sections:
+1. **Visual Theme & Atmosphere** — mood, personality, and key visual motifs
+2. **Color Palette & Roles** — exact hex values, opacity patterns, and semantic usage for each color token
+3. **Typography Rules** — font stacks, type scale, sizing values, weights, tracking, and line heights
+4. **Component Stylings** — full CSS/HTML specs for every reusable component (buttons, cards, terminals, badges, etc.)
+5. **Layout Principles** — max-widths, grid patterns, spacing rhythm, z-index layers
+6. **Depth & Elevation** — shadow system, surface layering, border weight patterns
+7. **Do's and Don'ts** — guardrails to prevent common mistakes when generating UI
+8. **Responsive Behavior** — breakpoints, stacking behavior, and mobile adaptations
+9. **Agent Prompt Guide** — ready-to-use prompt templates for generating common UI patterns
+
+### Why it matters for agentic engineering
+
+When an agent modifies or extends a UI, it typically infers styles from existing code — which is error-prone and inconsistent. A `DESIGN.md` makes the design system an explicit, queryable contract. The agent doesn't need to guess: it can read the spec, extract the exact token values, and generate conformant code immediately.
+
+See [`examples/DESIGN.md`](examples/DESIGN.md) for a real-world example based on the [NodeProxy](https://nodeproxy.ai) marketing site — precise enough that an agent could rebuild the entire UI from scratch using only that file.
+
+### Adding DESIGN.md to your project
+
+1. Create `DESIGN.md` in your project root (or `docs/DESIGN.md`)
+2. Follow the [VoltAgent awesome-design-md format](https://github.com/VoltAgent/awesome-design-md)
+3. Reference it from your `CLAUDE.md` or `AGENTS.md`:
+   ```markdown
+   ## UI Development
+   Before generating any UI: read `DESIGN.md` for colors, typography, components, and layout rules.
+   ```
 
 ---
 
